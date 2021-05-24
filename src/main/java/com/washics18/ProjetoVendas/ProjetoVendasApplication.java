@@ -1,5 +1,6 @@
 package com.washics18.ProjetoVendas;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,20 @@ import com.washics18.ProjetoVendas.domain.Cidade;
 import com.washics18.ProjetoVendas.domain.Cliente;
 import com.washics18.ProjetoVendas.domain.Endereco;
 import com.washics18.ProjetoVendas.domain.Produto;
+import com.washics18.ProjetoVendas.domain.enums.EstadoPagamento;
 import com.washics18.ProjetoVendas.domain.enums.TipoCliente;
 import com.washics18.ProjetoVendas.domain.Estado;
+import com.washics18.ProjetoVendas.domain.Pagamento;
+import com.washics18.ProjetoVendas.domain.PagamentoComBoleto;
+import com.washics18.ProjetoVendas.domain.PagamentoComCartao;
+import com.washics18.ProjetoVendas.domain.Pedido;
 import com.washics18.ProjetoVendas.repositories.CategoriaRepository;
 import com.washics18.ProjetoVendas.repositories.CidadeRepository;
 import com.washics18.ProjetoVendas.repositories.ClienteRepository;
 import com.washics18.ProjetoVendas.repositories.EnderecoRepository;
 import com.washics18.ProjetoVendas.repositories.EstadoRepository;
+import com.washics18.ProjetoVendas.repositories.PagamentoRepository;
+import com.washics18.ProjetoVendas.repositories.PedidoRepository;
 import com.washics18.ProjetoVendas.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -36,6 +44,10 @@ public class ProjetoVendasApplication implements CommandLineRunner {
 	private ClienteRepository  clienteRepository;
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
+	@Autowired
+	private PedidoRepository pedidoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProjetoVendasApplication.class, args);
@@ -85,13 +97,27 @@ public class ProjetoVendasApplication implements CommandLineRunner {
 		
 		cli1.getEnderecos().addAll(Arrays.asList(e1,e2));
 		
-		
-		
-		
 		clienteRepository.saveAll(Arrays.asList(cli1));
 		enderecoRepository.saveAll(Arrays.asList(e1,e2));
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		
+		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cli1, e1);
+		Pedido ped2 = new Pedido(null, sdf.parse("10/10/2017 19:35"), cli1, e2);
+		
 	   
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6); //classe pagamento abstract só pode ser instaciada pelas subclasses
+		ped1.setPagamento(pagto1);
+		
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/10/2017 00:00"), null);
+		ped2.setPagamento(pagto2);
+		
+		cli1.getPedidos().addAll(Arrays.asList(ped1,ped2));
+		
+		pedidoRepository.saveAll(Arrays.asList(ped1,ped2));
+		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
+		
+		
 		
 		
 		
