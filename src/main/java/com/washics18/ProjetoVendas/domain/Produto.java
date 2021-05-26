@@ -15,7 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Produto implements Serializable {
@@ -29,27 +29,29 @@ public class Produto implements Serializable {
 	private Double price;
 	
 	
-	@JsonBackReference //em categoria já buscou os objetos
+	@JsonIgnore
 	@ManyToMany 
 	@JoinTable(name = "PRODUTO_CATEGORIA" , // a tabela que vai ficar entre categoria e produto ,faz a relaçao entre categoria e produto de muitos pra muitos , //mapeamento da List<Categoria>
 	joinColumns = @JoinColumn(name = "produto_id") , // chave estrangeira da tabela produto
 	inverseJoinColumns = @JoinColumn(name = "categoria_id")) // chave estrangeira da tabela categoria
 	private List<Categoria> categorias = new ArrayList<>();//relação um produto pode ter varias categorias.
 	
-	@OneToMany(mappedBy="id.pedido")
+	@JsonIgnore
+	@OneToMany(mappedBy="id.produto")
 	private Set<ItemPedido> itens = new HashSet<>();
 	
 	public Produto() {
 		
 	}
 	
+	@JsonIgnore
 	public List<Pedido> getPedidos(){
 		
 		List<Pedido> lista = new ArrayList<>();
 		
 		for(ItemPedido itensPedido : itens){
 			
-			itensPedido.getPedido();
+			lista.add(itensPedido.getPedido());
 		}
 		
 		return lista;
