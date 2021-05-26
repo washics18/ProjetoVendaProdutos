@@ -16,6 +16,7 @@ import com.washics18.ProjetoVendas.domain.Produto;
 import com.washics18.ProjetoVendas.domain.enums.EstadoPagamento;
 import com.washics18.ProjetoVendas.domain.enums.TipoCliente;
 import com.washics18.ProjetoVendas.domain.Estado;
+import com.washics18.ProjetoVendas.domain.ItemPedido;
 import com.washics18.ProjetoVendas.domain.Pagamento;
 import com.washics18.ProjetoVendas.domain.PagamentoComBoleto;
 import com.washics18.ProjetoVendas.domain.PagamentoComCartao;
@@ -25,6 +26,7 @@ import com.washics18.ProjetoVendas.repositories.CidadeRepository;
 import com.washics18.ProjetoVendas.repositories.ClienteRepository;
 import com.washics18.ProjetoVendas.repositories.EnderecoRepository;
 import com.washics18.ProjetoVendas.repositories.EstadoRepository;
+import com.washics18.ProjetoVendas.repositories.ItemPedidoRepository;
 import com.washics18.ProjetoVendas.repositories.PagamentoRepository;
 import com.washics18.ProjetoVendas.repositories.PedidoRepository;
 import com.washics18.ProjetoVendas.repositories.ProdutoRepository;
@@ -48,6 +50,8 @@ public class ProjetoVendasApplication implements CommandLineRunner {
 	private PagamentoRepository pagamentoRepository;
 	@Autowired
 	private PedidoRepository pedidoRepository;
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProjetoVendasApplication.class, args);
@@ -116,6 +120,21 @@ public class ProjetoVendasApplication implements CommandLineRunner {
 		
 		pedidoRepository.saveAll(Arrays.asList(ped1,ped2));
 		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
+		
+		ItemPedido ip1 = new ItemPedido(ped1, p1, 0.00, 1, 200.00);
+		ItemPedido ip2 = new ItemPedido(ped1, p3, 0.00, 2, 80.00);
+		ItemPedido ip3 = new ItemPedido(ped2, p2, 100.00, 1, 800.00);
+		
+		ped1.getItens().addAll(Arrays.asList(ip1,ip2));
+		ped2.getItens().addAll(Arrays.asList(ip3));
+		
+		p1.getItens().addAll(Arrays.asList(ip1));
+		p2.getItens().addAll(Arrays.asList(ip3));
+		p3.getItens().addAll(Arrays.asList(ip2));
+		
+		
+		itemPedidoRepository.saveAll(Arrays.asList(ip1,ip2,ip3));
+		
 		
 		
 		
